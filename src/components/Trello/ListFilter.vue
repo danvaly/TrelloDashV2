@@ -1,32 +1,31 @@
 <template>
   <div class="filter-container">
-    <input type="text" v-model="filter" @change="updateFilter" placeholder="Card Filter"/>
+    <label>List Filter</label>
+    <input type="text" v-model="filter" @change="updateFilter" placeholder="List Filter"/>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'CardFilter',
+  name: 'ListFilter',
   data () {
     return {
       filter: ''
     }
   },
   mounted () {
-    if (localStorage.getItem('card_filter')) {
-      this.filter = localStorage.getItem('card_filter')
+    if (localStorage.getItem('list_filter')) {
+      this.filter = localStorage.getItem('list_filter')
     }
   },
   methods: {
     updateFilter () {
-      localStorage.setItem('card_filter', this.filter)
-      this.$emit('filterUpdated', this.filter)
+      localStorage.setItem('list_filter', this.filter)
+      window.location.reload()
     }
   }
 }
 </script>
 <style lang="scss">
-.filter-container {
-  padding: 5px;
-}
+
 </style>

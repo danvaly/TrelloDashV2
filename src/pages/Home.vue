@@ -1,111 +1,54 @@
 <template>
-  <div class="home page">
-    <h1>{{ msg }}</h1>
-    <button @click="isShownModal = true">show modal</button>
-    <button @click="showToast">show toast</button>
-    <UiModal closeOnOverlay :show.sync="isShownModal">
-      <div class="some-modal-content">
-        hi here
-        <div class="buttons">
-          <button @click="submitModalHandler">ok</button>
-        </div>
-      </div>
-    </UiModal>
-
-    <UiBaseIcon width="40px" height="40px" color="blue" iconName="done" @click="onClickIcon"/>
-
-    <UiInputText
-      v-model="msg"
-      placeholder="Enter message"
-      label="Enter message"
-      someHelloProp="hello"
-      @blur="onBlur"
-      @keyup.enter="onEnter"
-      @keyup.esc="onEsc"
-      :error="inputError">
-      <div slot="before">
-        <UiBaseIcon iconName="done"/>
-      </div>
-      <div slot="after">
-        <UiBaseIcon iconName="write"/>
-      </div>
-      <div slot="bottom">This is very important description</div>
-    </UiInputText>
-
-    <UiCheckbox value="hello checkbox" v-model="checkboxState"/>
-
-    <br><br>
-    <UiPaginationOffset :offset.sync="pagination.offset" :limit="pagination.limit" :total="pagination.total"/>
-
+  <div>
+    <organization-list></organization-list>
+    <div id="content" tabindex="-1">
+      <board-list :boards="boards"></board-list>
+    </div>
   </div>
 </template>
 
 <script>
-import UiModal from '@/components/UiModal.vue'
-import UiBaseIcon from '@/components/icons/UiBaseIcon.vue'
-import UiInputText from '@/components/UiInputText.vue'
-import UiCheckbox from '@/components/UiCheckbox.vue'
-import UiPaginationOffset from '../components/UiPaginationOffset'
+
+import $store from '@/store'
+import { TrelloService } from '@/services/trello.service'
+import BoardList from '@/components/Trello/BoardList'
+import OrganizationList from '@/components/Trello/OrganizationList'
 
 export default {
-  name: 'IndexPage',
-
-  components: {
-    UiModal,
-    UiBaseIcon,
-    UiInputText,
-    UiCheckbox,
-    UiPaginationOffset
-  },
-
+  name: 'Dashboard',
   data () {
     return {
-      msg: 'Welcome to Index!!!',
-      isShownModal: false,
-      inputError: false,
-      checkboxState: false,
-
-      pagination: {
-        limit: 20,
-        offset: 0,
-        total: 60
-      }
+      boards: []
     }
   },
-
+  components: {
+    BoardList,
+    OrganizationList
+  },
+  mounted () {
+    $store.subscribe((mutation, state) => {
+      if (mutation.type === 'organizationFilter/SET_STATE' || mutation.type === 'organizationFilter/SET_CURRENT_FILTER') {
+        this.loadBoards()
+      }
+    })
+  },
   methods: {
-    showToast () {
-      console.log('aaa')
-      this.$store.commit('toast/NEW', { type: 'success', message: 'hello' })
-    },
-    submitModalHandler () {
-      // some logic
-      this.isShownModal = false
-    },
-    onBlur () {
-      console.log('onBlur!!!')
-    },
-    onEnter () {
-      console.log('onEnter!!!')
-    },
-    onEsc () {
-      console.log('onEsc!!!')
-    },
-    onClickIcon () {
-      console.log('onClickIcon!!!!')
+    async loadBoards () {
+      this.boards = []
+      for (const id in $store.state.organizationFilter.currentFilters) {
+        if ($store.state.organizationFilter.currentFilters[id]) {
+          const response = await TrelloService.getOrganizationBoards(id)
+          this.boards = this.boards.concat(response.data)
+        }
+      }
     }
   }
+
 }
 </script>
 
-<style lang="scss" scoped>
-.some-modal-content {
-  min-width: 400px;
-  padding: 25px;
-
-  .buttons button {
-    padding: 10px;
-    margin: 10px;
-  }
+<style lang="scss">
+#content {
+  height: calc(100vh - 80px);
 }
 </style>

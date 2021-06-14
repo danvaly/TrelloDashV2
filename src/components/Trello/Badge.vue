@@ -29,9 +29,6 @@ export default {
   name: 'Card',
   props: {
     card: Object
-  },
-  mounted () {
-    console.log(this.card)
   }
 }
 </script>

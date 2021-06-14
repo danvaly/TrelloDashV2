@@ -1,7 +1,7 @@
-import state from './_State'
-import mutations from './_Mutations'
-import getters from './_Getters'
-import actions from './_Actions'
+import state from './BoardState'
+import mutations from './BoardMutations'
+import getters from './BoardGetters'
+import actions from './BoardActions'
 
 export default {
   namespaced: true,

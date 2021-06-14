@@ -47,12 +47,39 @@ function _getResponseErrorMessage (error) {
  * @param {String} [message] - custom message to display
  */
 export class ResponseWrapper {
-  constructor (response, data = {}, message) {
+  constructor (response, data = {}, message, key = false, useSessionStorage = true) {
+    if (key) {
+      if (useSessionStorage) {
+        sessionStorage.setItem(key, JSON.stringify(data))
+      } else {
+        localStorage.setItem(key, JSON.stringify(data))
+      }
+    }
     this.data = data
-    this.success = response.data.success
+    this.success = !!response
     this.status = response.status
     this.statusMessage = _getStatusMessage(this.status)
     this.message = message || null
+  }
+}
+
+export class CachedResponseWrapper {
+  constructor (key, useSessionStorage = true) {
+    if (useSessionStorage) {
+      const storageData = JSON.parse(sessionStorage.getItem(key))
+      this.data = storageData
+      this.success = !!storageData
+      this.status = 200
+      this.statusMessage = _getStatusMessage(this.status)
+      this.message = null
+    } else {
+      const storageData = JSON.parse(localStorage.getItem(key))
+      this.data = storageData
+      this.success = !!storageData
+      this.status = 200
+      this.statusMessage = _getStatusMessage(this.status)
+      this.message = null
+    }
   }
 }
 

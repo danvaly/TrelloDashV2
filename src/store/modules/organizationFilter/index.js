@@ -1,7 +1,7 @@
-import state from './OrganizationState'
-import mutations from './OrganizationMutations'
-import getters from './OrganizationGetters'
-import actions from './OrganizationActions'
+import state from './OrganizationFilterState'
+import mutations from './OrganizationFilterMutations'
+import getters from './OrganizationFilterGetters'
+import actions from './OrganizationFilterActions'
 
 export default {
   namespaced: true,

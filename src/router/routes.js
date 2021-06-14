@@ -1,51 +1,36 @@
-// profile
-import profilePage from '../pages/profile/ProfilePage.vue'
-import profilePostsPage from '../pages/profile/ProfilePostsPage.vue'
-
 // single pages
 import homePage from '../pages/Home.vue'
-import newsPage from '../pages/news/NewsPage.vue'
+import queuePage from '../pages/Queue.vue'
 import loginPage from '../pages/Login.vue'
 import notFoundPage from '../pages/NotFound.vue'
-
-import { routePropResolver } from './util'
-import { DOMAIN_TITLE } from '../.env'
 
 export const routes = [
   {
     path: '/',
     name: 'index',
     component: homePage,
-    meta: { title: `${DOMAIN_TITLE} | home` }
+    meta: {
+      isAuth: true,
+      title: `${process.env.VUE_APP_DOMAIN_TITLE} | Dashboard`
+    }
   },
   {
-    path: '/news',
-    name: 'news',
-    component: newsPage,
-    meta: { title: `${DOMAIN_TITLE} | news` },
-    props: routePropResolver
-  },
-  {
-    path: '/profile',
-    component: profilePage,
-    meta: { isAuth: true, title: `${DOMAIN_TITLE} | profile` },
-    children: [
-      {
-        path: '',
-        name: 'profile',
-        component: profilePostsPage
-      }
-    ]
+    path: '/queue',
+    name: 'queue',
+    component: queuePage,
+    meta: {
+      title: `${process.env.VUE_APP_DOMAIN_TITLE} | My Queue`
+    }
   },
   {
     path: '/login',
     name: 'login',
     component: loginPage,
-    meta: { title: `${DOMAIN_TITLE} | login` }
+    meta: { title: `${process.env.VUE_APP_DOMAIN_TITLE} | Login Page` }
   },
   {
     path: '*',
     component: notFoundPage,
-    meta: { title: `${DOMAIN_TITLE} | not found` }
+    meta: { title: `${process.env.VUE_APP_DOMAIN_TITLE} | Not found` }
   }
 ]

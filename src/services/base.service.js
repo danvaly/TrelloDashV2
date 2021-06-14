@@ -2,12 +2,13 @@ import qs from 'qs'
 import { assert } from '@/core'
 
 import { Http } from './http.init'
-import { ResponseWrapper, ErrorWrapper } from './util'
+import { CachedResponseWrapper, ErrorWrapper, ResponseWrapper } from './util'
 
 export class BaseService {
   static get entity () {
     throw new Error('entity getter not defined')
   }
+
   /**
    * ------------------------------
    * @HELPERS
@@ -16,6 +17,24 @@ export class BaseService {
 
   static request (status = { auth: false }) {
     return new Http(status)
+  }
+
+  static async getAsync ({ status }, key, cache = false, useSessionStorage = true) {
+    try {
+      const cacheKey = key.replaceAll('/', '_').substr(1)
+      if (cache) {
+        if (useSessionStorage && sessionStorage.getItem(cacheKey)) {
+          return new CachedResponseWrapper(cacheKey, useSessionStorage)
+        } else if (localStorage.getItem(cacheKey)) {
+          return new CachedResponseWrapper(cacheKey, useSessionStorage)
+        }
+      }
+      const response = await this.request({ auth: true }).get(key)
+      return new ResponseWrapper(response, response.data, '', cache ? cacheKey : false, useSessionStorage)
+    } catch (error) {
+      const message = error.response.data ? error.response.data.error : error.response.statusText
+      throw new ErrorWrapper(error, message)
+    }
   }
 
   static responseWrapper (...rest) {

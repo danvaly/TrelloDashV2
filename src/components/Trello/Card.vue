@@ -1,35 +1,34 @@
 <template>
-  <div class="list-wrapper">
-    <div class="list" :style="style">
-      <div class="list-header">
-        <h2 class="list-header-name" dir="auto">
-          <a data-board-name="V2-Baltic" class="boardHide">
-            <span class="icon-sm icon-subscribe"></span>
-          </a>
-          <a :href="board.url" target="trello"
-             class="board-name" style="text-decoration: none; font-size: 16px;">
-            {{ board.name }}
-          </a>
-        </h2></div>
-      <div class="list-cards">
+  <div class="list-card">
+    <div class="list-card-details">
+      <div class="card-labels" v-if="card.labels.length">
+        <Label v-for="label in card.labels" :key="label.id" :label="label"></Label>
+      </div>
+      <a :href="card.url" target="trello" class="list-card-title" dir="auto">
+        {{ card.name }}
+      </a>
+      <div class="badges"><small>in <strong>{{ card.list.name }}</strong></small></div>
+      <div class="list-card-members" v-if="card.idMembers">
+        <Member v-for="memberId in card.idMembers" :key="memberId" :memberId="memberId"></Member>
       </div>
     </div>
   </div>
 </template>
 <script>
+import Label from '@/components/Trello/Label'
+import Member from '@/components/Trello/Member'
+
 export default {
-  name: 'Board',
-  props: {
-    board: Object,
-    cards: Array
+  name: 'Card',
+  components: {
+    Label,
+    Member
   },
-  computed: {
-    style () {
-      return {
-        'background-color': this.board.prefs.backgroundColor,
-        display: this.cards && this.cards.length ? '' : 'none'
-      }
-    }
+  props: {
+    card: Object
+  },
+  mounted () {
+    // console.log(this.card)
   }
 }
 </script>

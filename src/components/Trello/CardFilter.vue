@@ -1,48 +1,37 @@
 <template>
-  <a class="button primary" @click="changeState">
-    <span class="icon-sm icon-checkbox-checked" v-if="state"></span>
-    <span class="icon-sm icon-checkbox-unchecked" v-if="!state"></span>
-    {{ organization }}
-  </a>
+  <div class="filter-container">
+    <label>Card Filter</label>
+    <input type="text" v-model="filter" @change="updateFilter" placeholder="Card Filter"/>
+  </div>
 </template>
 
 <script>
-
 export default {
-  name: 'Organization',
+  name: 'CardFilter',
   data () {
     return {
-      state: false
-    }
-  },
-  props: {
-    organization: String,
-    organizationId: String
-  },
-  computed: {
-    name: () => {
-      return this.organization ? this.organization.name : ''
+      filter: ''
     }
   },
   mounted () {
-    if (localStorage.getItem('organizationFilter')) {
-      const cacheFilters = JSON.parse(localStorage.getItem('organizationFilter'))
-      if (cacheFilters[this.organizationId] !== undefined) {
-        this.state = cacheFilters[this.organizationId]
-      }
+    if (localStorage.getItem('card_filter')) {
+      this.filter = localStorage.getItem('card_filter')
     }
   },
   methods: {
-    changeState () {
-      this.state = !this.state
-      this.emitChange()
-    },
-    emitChange () {
-      this.$emit('stateChange', {
-        organizationId: this.organizationId,
-        state: this.state
-      })
+    updateFilter () {
+      localStorage.setItem('card_filter', this.filter)
+      window.location.reload()
     }
   }
 }
 </script>
+<style lang="scss">
+.filter-container {
+  padding: 5px;
+
+  input {
+    margin: 0!important;
+  }
+}
+</style>

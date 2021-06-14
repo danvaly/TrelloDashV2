@@ -7,13 +7,12 @@
 import axios from 'axios'
 
 import { AuthService } from '@/services/auth.service'
-import { API_URL } from '../.env'
 
 export class Http {
   constructor (status) {
     this.isAuth = status && status.auth ? status.auth : false
     this.instance = axios.create({
-      baseURL: API_URL
+      baseURL: process.env.VUE_APP_TRELLO_API_URL
     })
 
     return this.init()
@@ -22,18 +21,12 @@ export class Http {
   init () {
     if (this.isAuth) {
       this.instance.interceptors.request.use(request => {
-        request.headers.authorization = AuthService.getBearer()
-        // if access token expired and refreshToken is exist >> go to API and get new access token
-        if (AuthService.isAccessTokenExpired() && AuthService.hasRefreshToken()) {
-          return AuthService.debounceRefreshTokens()
-            .then(response => {
-              AuthService.setBearer(response.data.accessToken)
-              request.headers.authorization = AuthService.getBearer()
-              return request
-            }).catch(error => Promise.reject(error))
-        } else {
-          return request
+        request.params = {
+          ...request.params,
+          key: process.env.VUE_APP_TRELLO_API_KEY,
+          token: AuthService.getToken()
         }
+        return request
       }, error => {
         return Promise.reject(error)
       })

@@ -1,27 +1,47 @@
-import { assert } from '@/core'
 import { BaseService } from './base.service'
-import { ErrorWrapper, ResponseWrapper } from './util'
 
-export class PostsService extends BaseService {
+export class TrelloService extends BaseService {
   static get entity () {
-    return 'posts'
+    return 'cards'
   }
 
-  static async getPostsByUserId (params = {}) {
-    assert.object(params, { required: true })
-    assert.object(params.filter, { required: true })
-    assert.id(params.filter.userId, { required: true })
+  static async me () {
+    return this.getAsync({ auth: true }, '/members/me', true, false)
+  }
 
-    try {
-      const response = await this.request({ auth: true }).get(`${this.entity}?${this.querystring(params)}`)
-      const data = {
-        content: response.data.data,
-        total: Number(response.headers['x-total-count'])
-      }
-      return new ResponseWrapper(response, data)
-    } catch (error) {
-      const message = error.response.data ? error.response.data.error : error.response.statusText
-      throw new ErrorWrapper(error, message)
-    }
+  static async getMember (id) {
+    return this.getAsync({ auth: true }, `/members/${id}`, true, false)
+  }
+
+  static async getBoard (id) {
+    return this.getAsync({ auth: true }, `/boards/${id}`, true, false)
+  }
+
+  static async getOrganizationMembers (id) {
+    return this.getAsync({ auth: true }, `/organizations/${id}/members`, true, false)
+  }
+
+  static async getMemberCards (id) {
+    return this.getAsync({ auth: true }, `/members/${id}/cards`, true, false)
+  }
+
+  static async organizations (id) {
+    return this.getAsync({ auth: true }, `/members/${id}/organizations`, true, false)
+  }
+
+  static async getOrganizationBoards (id) {
+    return this.getAsync({ auth: true }, `/organizations/${id}/boards`, true, false)
+  }
+
+  static async getBoardLists (id) {
+    return this.getAsync({ auth: true }, `/boards/${id}/lists`, true, false)
+  }
+
+  static async getBoardCards (id) {
+    return this.getAsync({ auth: true }, `/boards/${id}/cards`, false)
+  }
+
+  static getListCards (id) {
+    return this.getAsync({ auth: true }, `/lists/${id}/cards`, false)
   }
 }

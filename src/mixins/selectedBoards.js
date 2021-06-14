@@ -1,6 +1,6 @@
 export default {
   computed: {
-    $currentUser () {
+    $selectedBoards () {
       return this.$store.state.user.currentUser
     }
   }

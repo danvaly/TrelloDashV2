@@ -1,5 +1,3 @@
 export default {
-  currentFilters: {
-
-  }
+  currentFilters: localStorage.getItem('hiddenBoards') ? JSON.parse(localStorage.getItem('hiddenBoards')) : []
 }

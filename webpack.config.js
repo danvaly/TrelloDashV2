@@ -1,17 +1,8 @@
-const { VueLoaderPlugin } = require('vue-loader')
-
+// Resolve Webpack alias in Webstorm (https://gist.github.com/zmts/bd620cd473e6c96e8884f03d0cee7f15)
 module.exports = {
-    module: {
-        rules: [
-            // ... other rules
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader'
-            }
-        ]
-    },
-    plugins: [
-        // make sure to include the plugin!
-        new VueLoaderPlugin()
-    ]
+  resolve: {
+    alias: {
+      '@': require('path').resolve(__dirname, 'src')
+    }
+  }
 }

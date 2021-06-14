@@ -1,22 +1,26 @@
 <template>
-  <div class="login">
-    <div class="main">
-      <div class="header">Вход</div>
-      <div class="content">
-        <label for="email">E-mail</label>
-        <input id="email" type="text" v-model="email">
+  <div id="login">
+    <span class="icon-lg icon-taco"></span>
 
-        <label for="password">password</label>
-        <input id="password" type="password" v-model="password" @keyup.enter="makeLogin">
-      </div>
-      <div class="buttons">
-        <button @click="makeLogin">login</button>
-      </div>
-
-      <div class="error" v-if="error">
-        {{ error }}
-      </div>
+    <div class="login-page">
+      <h3> Access required</h3>
+      <p>You need to authorize <strong>Trello Dash</strong> to connect to your profile!<br/>
+        Go to the authorization page and copy the token in the field bellow to give the app access to your account!</p>
+      <p>Don't worry, we don't store your token! Your data is safe!</p>
+      <a class="button" :href="loginLink" target="_blank">Open authorization page</a>
+      <br>
+      <input type="text" v-model="token" placeholder="Authorization token">
+      <a class="button primary" @click="save">
+        <i class="icon-sm icon-send"></i>
+        Log in
+      </a>
+      <a class="copyright" href="https://github.com/danvaly">&copy; danvaly</a>
     </div>
+
+    <p>
+      Trello Dash v1 is deprecated and is <a href="https://www.activeline.ro/trellodashv1/" target="_blank">available
+      here!</a>
+    </p>
   </div>
 </template>
 
@@ -27,60 +31,60 @@ export default {
   name: 'Login',
   data () {
     return {
-      email: 'user@user.com',
-      password: '123456',
-      error: ''
+      token: ''
     }
   },
-
+  computed: {
+    loginLink: () => AuthService.getLoginLink()
+  },
   methods: {
-    async makeLogin () {
+    async save () {
       try {
-        await AuthService.makeLogin({ email: this.email, password: this.password })
-        this.error = ''
-        await this.$store.dispatch('user/getCurrent')
-        await this.$router.push('profile')
+        await AuthService.login(this.token)
+        await this.$router.push({ name: 'index' })
       } catch (error) {
-        this.$store.commit('toast/NEW', { type: 'error', message: error.message })
         this.error = error.status === 404 ? 'User with same email not found' : error.message
       }
+    }
+  },
+  mounted () {
+    if (AuthService.authenticated()) {
+      AuthService.init()
+      this.$router.push({ name: 'index' })
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.login {
-  width: 100%;
-  height: 70%;
+<style lang="scss">
+.copyright {
+  text-decoration: none;
+  color: #999999;
+}
+
+#login {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 100%;
+  height: 100vh;
+  flex-direction: column;
 
-  .main {
-    padding: 30px 15px;
-    background: #fff;
-    width: 400px;
-    border-radius: 2px;
-    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, .2),
-    0 24px 38px 3px rgba(0, 0, 0, .14),
-    0 9px 46px 8px rgba(0, 0, 0, .12);
+  .icon-lg {
+    font-size: 48px;
+  }
 
-    .header {
-      text-align: center;
-    }
+  .login-page {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #FFFFFF;
+    max-width: 400px;
+    border-radius: 3px;
 
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .error {
-      background-color: red;
-      padding: 10px;
-      font-size: 12px;
-      opacity: 1;
-      transition: all 0.5s;
+    input {
+      width: 100%;
     }
   }
 }
