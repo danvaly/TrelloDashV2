@@ -12908,7 +12908,6 @@ a.board-background-prompt--item {
   flex: 1 1 auto;
   margin-bottom: 0;
   overflow-y: auto;
-  overflow-x: hidden;
   margin: 0 4px;
   padding: 0 4px;
   z-index: 1;
@@ -16229,11 +16228,12 @@ textarea.list-card-composer-textarea, textarea.list-card-composer-textarea:focus
   border-radius: 3px;
   box-shadow: 0 1px 0 rgba(9, 30, 66, .25);
   cursor: pointer;
-  display: block;
   margin-bottom: 8px;
   max-width: 300px;
   min-height: 20px;
   position: relative;
+  display: flex;
+  flex-direction: column;
   text-decoration: none;
   z-index: 0
 }
@@ -16253,10 +16253,10 @@ textarea.list-card-composer-textarea, textarea.list-card-composer-textarea:focus
 }
 
 .list-card-details {
-  overflow: hidden;
   padding: 6px 8px 2px;
-  position: relative;
-  z-index: 10
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
 }
 
 .list-card-operation {
@@ -16283,14 +16283,60 @@ textarea.list-card-composer-textarea, textarea.list-card-composer-textarea:focus
   opacity: 1
 }
 
+.list-card-header {
+  display: flex;
+
+  .card-labels {
+    flex: 1;
+  }
+}
+
+.list-card-actions {
+  padding: 3px;
+  border-radius: 5px;
+
+  &hover {
+    background: #ddd;
+
+  }
+
+  .dropdown {
+    position: relative;
+    z-index: 100;
+
+    .dropdown-menu {
+      position: fixed;
+      padding: 10px;
+      background: #fff;
+      border-radius: 5px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+
+      .dropdown-item {
+        padding: 5px 10px;
+        text-decoration: none;
+        &:hover{
+          background: #ddd;
+        }
+      }
+    }
+  }
+
+}
+
 .list-card-title {
   clear: both;
   display: block;
   margin: 0 0 4px;
-  overflow: hidden;
   text-decoration: none;
   word-wrap: break-word;
   color: #172b4d
+}
+
+.list-card-footer{
+  display: flex;
+  justify-content: space-between;
 }
 
 .list-card-title::selection {
@@ -16310,14 +16356,13 @@ textarea.list-card-composer-textarea, textarea.list-card-composer-textarea:focus
 }
 
 .list-card-members {
-  float: right;
-  margin: 0 -2px 0 0
+  margin: 0 -2px 0 0;
+  display: flex;
 }
 
 .list-card-members .member {
   height: 28px;
   width: 28px;
-  float: right;
   margin: 0 0 4px 4px
 }
 
